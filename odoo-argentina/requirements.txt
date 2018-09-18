@@ -8,3 +8,5 @@ dbf>=0.88.019
 Pillow>=2.0.0
 openupgradelib
 git+https://github.com/reingart/pyafipws@master
+BeautifulSoup
+geopy
