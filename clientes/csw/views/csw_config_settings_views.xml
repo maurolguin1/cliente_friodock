@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_csw_config" model="ir.ui.view">
+            <field name="name">csw settings</field>
+            <field name="model">csw.config.settings</field>
+            <field name="arch" type="xml">
+                <form string="CSW Settings"
+                      class="oe_form_configuration">
+                    <header>
+                        <button string="Apply" type="object" name="execute"
+                                class="oe_highlight"/>
+                        <button string="Cancel" type="object" name="cancel"
+                                class="oe_link" special="cancel"/>
+                    </header>
+                    <group string="Default Locations"
+                           name="default_options">
+                        <field name="reception_location_id"/>
+                        <field name="default_location_dest_id"/>
+                        <field name="default_location_id"/>
+                        <field name="delivery_location_dest_id"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="action_csw_configuration"
+                model="ir.actions.act_window">
+            <field name="name">CSW Settings</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">csw.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+        </record>
+
+        <menuitem id="menu_csw_config" name="Settings"
+                  parent="csw.menu_csw_config_settings"
+                  sequence="0" action="action_csw_configuration"
+                  groups="base.group_system"/>
+    </data>
+</odoo>

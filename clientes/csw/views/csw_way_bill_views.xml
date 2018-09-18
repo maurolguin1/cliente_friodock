@@ -1,0 +1,589 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--Driver Views-->
+    <record id="csw_driver_view_search" model="ir.ui.view">
+        <field name="name">csw.driver.search</field>
+        <field name="model">csw.driver</field>
+        <field name="arch" type="xml">
+            <search string="Driver Search">
+                <field name="name"
+                       filter_domain="['|',('name','ilike',self),('main_id_number','ilike',self)]"/>
+                <field name="main_id_number"/>
+                <field name="license_number"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="csw_driver_view_form" model="ir.ui.view">
+        <field name="name">csw.driver.form</field>
+        <field name="model">csw.driver</field>
+        <field name="arch" type="xml">
+            <form string="Driver">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only" string="Name"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <label for="main_id_number"
+                                   string="Driver Doc. No."/>
+                            <div class="address_format">
+                                <field name="main_id_category_id"
+                                       placeholder="Category"
+                                       style="width: 35%"/>
+                                <field name="main_id_number"
+                                       placeholder="Number"
+                                       style="width: 63%"/>
+                            </div>
+                            <field name="license_number"/>
+                            <field name="afip_responsability_type_id"/>
+                        </group>
+                        <group>
+                            <field name="partner_id"
+                                   attrs="{'required':[('transport_company_id','=', False)]}"/>
+                            <field name="transport_company_id"
+                                   attrs="{'required':[('partner_id','=', False)]}"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="csw_driver_view_tree" model="ir.ui.view">
+        <field name="name">csw.driver.tree</field>
+        <field name="model">csw.driver</field>
+        <field name="arch" type="xml">
+            <tree string="Drivers">
+                <field name="name"/>
+                <field name="license_number"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="csw_driver_action" model="ir.actions.act_window">
+        <field name="name">Drivers</field>
+        <field name="res_model">csw.driver</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="csw_driver_view_tree"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to add a new Driver.
+            </p>
+        </field>
+    </record>
+
+    <!--Truck Views-->
+    <record id="csw_truck_view_search" model="ir.ui.view">
+        <field name="name">csw.truck.search</field>
+        <field name="model">csw.truck</field>
+        <field name="arch" type="xml">
+            <search string="Truck Search">
+                <field name="name"
+                       filter_domain="['|',('name','ilike',self),('license_number','ilike',self)]"
+                       string="Truck"/>
+                <field name="partner_id"/>
+                <field name="transport_company_id"/>
+                <filter string="On Street" name="street"
+                        domain="[('state','=','street')]"/>
+                <filter string="On Dock" name="dock"
+                        domain="[('state','=','dock')]"/>
+                <filter string="Exit Control" name="exit"
+                        domain="[('state','=','exit')]"/>
+                <separator/>
+                <filter string="Customer" domain="[('partner_id','!=',False)]"
+                        help="Trucks that belong to customer's company"/>
+                <filter string="Transport Company"
+                        domain="[('transport_company_id','!=',False)]"
+                        help="Trucks that belong to a Transport Company"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="csw_truck_view_form" model="ir.ui.view">
+        <field name="name">csw.truck.form</field>
+        <field name="model">csw.truck</field>
+        <field name="arch" type="xml">
+            <form string="Truck">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only" string="Name"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="license_number"/>
+                            <field name="weight_tare"/>
+                            <field name="trailer_number"/>
+                            <field name="weight_trailer"/>
+                        </group>
+                        <group>
+                            <field name="partner_id"
+                                   attrs="{'required':[('transport_company_id','=', False)]}"/>
+                            <field name="transport_company_id"
+                                   attrs="{'required':[('partner_id','=', False)]}"/>
+                            <field name="operations_editable" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Truck Authorizations">
+                            <group>
+                                <group>
+                                    <field name="insurance_company_id"/>
+                                    <field name="insurance_type"/>
+                                </group>
+                                <group>
+                                    <field name="date_valid_until"
+                                           string="Valid Until"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Truck Operations">
+                            <field name="truck_operation_ids"
+                                   options="{'reload_on_button': True}"
+                                   attrs="{'readonly':[('operations_editable','=', False)]}">
+                                <tree>
+                                    <field name="truck_id" invisible="1"/>
+                                    <field name="way_bill_id"/>
+                                    <field name="date_start"/>
+                                    <field name="date_end"/>
+                                    <field name="action"/>
+                                    <field name="weight_total"/>
+                                    <field name="user_id"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="truck_id" invisible="1"/>
+                                        <field name="date_start"/>
+                                        <field name="date_end"/>
+                                        <field name="way_bill_id"/>
+                                        <field name="action"/>
+                                        <field name="weight_total"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="csw_truck_view_tree" model="ir.ui.view">
+        <field name="name">csw.truck.tree</field>
+        <field name="model">csw.truck</field>
+        <field name="arch" type="xml">
+            <tree string="Trucks">
+                <field name="name"/>
+                <field name="license_number"/>
+                <field name="weight_tare"/>
+                <field name="trailer_number"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="csw_truck_action" model="ir.actions.act_window">
+        <field name="name">Trucks</field>
+        <field name="res_model">csw.truck</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="csw_truck_view_tree"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to add a new Truck.
+            </p>
+        </field>
+    </record>
+
+    <!--Way Bill Views-->
+    <record id="csw_way_bill_view_search" model="ir.ui.view">
+        <field name="name">csw.way.bill.search</field>
+        <field name="model">csw.way.bill</field>
+        <field name="arch" type="xml">
+            <search string="Way Bill Search">
+                <field name="partner_id"/>
+                <field name="truck_id"/>
+                <field name="driver_id"/>
+                <field name="storage_type_id"/>
+                <field name="dock_id"/>
+                <field name="user_id"/>
+                <field name="service_type_id"/>
+                <filter string="Shift Request" name="shift"
+                        domain="[('shift_requested','=',True)]"
+                        help="Way bills recorded in Portal Web"/>
+                <filter name="today" string="Today"
+                        domain="[('date','=',time.strftime('%%Y-%%m-%%d'))]"/>
+                <separator/>
+                <filter string="Draft" name="draft"
+                        domain="[('state','=','draft')]"/>
+                <filter string="Confirmed" name="confirm"
+                        domain="[('state','=','confirm')]"/>
+                <filter string="Warehouse Product Movement" name="product_move"
+                        domain="[('state','=','product_move')]"/>
+                <filter string="Finished" name="finish"
+                        domain="[('state','=','finish')]"/>
+                <separator/>
+                <filter string="Entries" domain="[('type','=','entry')]"
+                        help="Entry of Products"/>
+                <filter string="Exits" domain="[('type','=','exit')]"
+                        help="Exit of Products"/>
+                <separator/>
+                <filter domain="[('user_id','=',uid)]" help="My Way Bills"/>
+                <group expand="0" string="Group By">
+                    <filter name="partner_id" string="Customer"
+                            context="{'group_by':'partner_id'}"/>
+                    <filter name="truck" string="Stage"
+                            context="{'group_by':'kanban_state'}"/>
+                    <filter name="truck" string="Truck"
+                            context="{'group_by':'truck_id'}"/>
+                    <filter name="status" string="Status"
+                            context="{'group_by':'state'}"/>
+                    <separator/>
+                    <filter name="service_type" string="Service Type"
+                            context="{'group_by':'service_type_id'}"/>
+                    <filter string="Date" context="{'group_by':'date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="csw_way_bill_view_form" model="ir.ui.view">
+        <field name="name">csw.way.bill.form</field>
+        <field name="model">csw.way.bill</field>
+        <field name="arch" type="xml">
+            <form string="Way Bill">
+                <header>
+                    <button name="action_confirm" states="draft"
+                            string="Confirm Way Bill" type="object"
+                            class="oe_highlight" groups="base.group_user"/>
+                    <field name="entry_weight_exists" invisible="1"/>
+                    <button name="action_entry_weight"
+                            string="Entry Weight" type="object"
+                            attrs="{'invisible': ['|', ('state', '!=', 'confirm'), '&amp;', ('state', '=', 'confirm'), ('entry_weight_exists', '=', True)]}"
+                            class="oe_highlight" groups="base.group_user"/>
+                    <button name="action_assign_dock" states="confirm"
+                            string="Assign to Dock" type="object"
+                            groups="base.group_user"/>
+                    <field name="exit_weight_exists" invisible="1"/>
+                    <button name="action_exit_weight"
+                            string="Exit Weight" type="object"
+                            attrs="{'invisible': ['|', ('state', '!=', 'product_move'), '&amp;', ('state', '=', 'product_move'), ('exit_weight_exists', '=', True)]}"
+                            class="oe_highlight" groups="base.group_user"/>
+                    <button name="action_add_service"
+                            states="confirm,product_move"
+                            string="Add Service" type="object"
+                            groups="base.group_user"/>
+                    <button name="action_finish"
+                            string="Finish" type="object"
+                            attrs="{'invisible': ['|', ('state', '!=', 'product_move'), '&amp;', ('state', '=', 'product_move'), ('exit_weight_exists', '=', False)]}"
+                            class="oe_highlight" groups="base.group_user"/>
+                    <button name="action_cancel" states="draft,confirm"
+                            string="Cancel" groups="base.group_user"
+                            type="object"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirm,product_move,finish"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button"
+                                name="open_storage_service"
+                                icon="fa-wrench"
+                                type="object">
+                            <field name="storage_service_count"
+                                   string="Service" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button"
+                                name="open_product_reception"
+                                icon="fa-truck"
+                                type="object"
+                                attrs="{'invisible':[('type','=', 'exit')]}"
+                                help="WH Product Reception">
+                            <field name="product_reception_count"
+                                   string="WH Product Reception"
+                                   widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button"
+                                name="open_product_delivery"
+                                icon="fa-truck"
+                                type="object"
+                                attrs="{'invisible':[('type','=', 'entry')]}"
+                                help="WH Product Delivery">
+                            <field name="product_delivery_count"
+                                   string="WH Product Delivery"
+                                   widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"
+                                   attrs="{'invisible':[('name','=', '/')]}"
+                                   placeholder="Way Bill Reference"
+                                   nolabel="1"/>
+                        </h1>
+                        <div name="options" groups="base.group_user">
+                            <div>
+                                <field name="shift_requested"/>
+                                <label for="shift_requested"/>
+                            </div>
+                        </div>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="transport_type"/>
+                            <field name="truck_id"
+                                   attrs="{'required':[('shift_requested','=', False)]}"/>
+                            <field name="license_number"/>
+                            <field name="driver_id"
+                                   attrs="{'required':[('shift_requested','=', False)]}"/>
+                            <field name="trailer_number"/>
+                            <field name="weight_entry"
+                                   attrs="{'readonly':['|', ('entry_weight_exists','=', False), ('state','in', ('cancel', 'finish'))]}"
+                                   string="Truck Entry Weight (Kg)"/>
+                            <field name="weight_exit"
+                                   attrs="{'readonly':['|', ('exit_weight_exists','=', False), ('state','in', ('cancel', 'finish'))]}"
+                                   string="Truck Exit Weight (Kg)"/>
+                        </group>
+                        <group>
+                            <field name="type"/>
+                            <field name="date"/>
+                            <field name="storage_type_id"/>
+                            <field name="delivery_number"
+                                   string="Customer Delivery No."/>
+                            <field name="senasa_number"/>
+                            <field name="inspection_number"/>
+                            <field name="seals_number"/>
+                            <field name="dock_id" string="Dock No."
+                                   attrs="{'required':[('state','=', 'product_move')]}"/>
+                            <field name="company_id"
+                                   groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Way Bill Operations">
+                            <field name="line_ids"
+                                   options="{'reload_on_button': True}">
+                                <tree>
+                                    <field name="product_id"
+                                           domain="[('store_ok', '=', True), ('owner_id', '=', parent.partner_id)]"/>
+                                    <field name="customer_pallet_no"/>
+                                    <field name="package_id"/>
+                                    <field name="pallet_type_id"/>
+                                    <field name="product_qty"/>
+                                    <field name="lot_number"/>
+                                    <field name="use_date"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="product_id"
+                                               domain="[('store_ok', '=', True), ('owner_id', '=', parent.partner_id)]"/>
+                                        <field name="customer_pallet_no"/>
+                                        <field name="package_id"
+                                               attrs="{'readonly': [('type', '=', 'entry')]}"/>
+                                        <field name="pallet_type_id"/>
+                                        <field name="product_qty"/>
+                                        <field name="lot_number"/>
+                                        <field name="use_date"/>
+                                        <field name="type" invisible="1"/>
+                                    </group>
+                                </form>
+                            </field>
+                            <group col="4">
+                                <field name="total_pallet_qty"/>
+                                <field name="service_type_id"/>
+                                <field name="total_product_qty"/>
+                                <field name="user_id"/>
+                            </group>
+                        </page>
+                        <page string="WH Product Movement">
+                            <group>
+                                <group>
+                                    <field name="product_reception_id"
+                                           attrs="{'invisible': [('type', '=', 'exit')]}"
+                                           string="WH Product Movement"/>
+                                    <field name="product_delivery_id"
+                                           attrs="{'invisible': [('type', '=', 'entry')]}"
+                                           string="WH Product Movement"/>
+                                    <field name="start_time"
+                                           widget="float_time"/>
+                                    <field name="end_time"
+                                           widget="float_time"/>
+                                </group>
+                                <group>
+                                    <field name="cancellation_reason"
+                                           attrs="{'required': [('state', '=', 'cancel')]}"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Comments">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="csw_way_bill_view_tree" model="ir.ui.view">
+        <field name="name">csw.way.bill.tree</field>
+        <field name="model">csw.way.bill</field>
+        <field name="arch" type="xml">
+            <tree string="Way Bills">
+                <field name="name"/>
+                <field name="type" string="Type"/>
+                <field name="partner_id"/>
+                <field name="date"/>
+                <field name="license_number" string="Truck License"/>
+                <field name="notes"/>
+                <field name="shift_requested_string"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="csw_way_bill_view_calendar">
+        <field name="name">csw.way.bill.calendar</field>
+        <field name="model">csw.way.bill</field>
+        <field name="priority" eval="2"/>
+        <field name="arch" type="xml">
+            <calendar string="Calendar View" color="partner_id"
+                      date_start="date">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="transport_type_string"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="csw_way_bill_view_kanban" model="ir.ui.view">
+        <field name="name">csw.way.bill.kanban</field>
+        <field name="model">csw.way.bill</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="kanban_state">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="kanban_state"/>
+                <field name="state"/>
+                <field name="date"/>
+                <field name="type"/>
+                <field name="notes"/>
+                <field name="shift_requested_string"/>
+                <field name="dock_id"/>
+                <templates>
+                    <t t-name="kanban-tooltip">
+                        <ul class="oe_kanban_tooltip">
+                            <li>
+                                <b>Type:</b>
+                                <field name="type"/>
+                            </li>
+                            <li>
+                                <b>Stage:</b>
+                                <field name="kanban_state"/>
+                            </li>
+                        </ul>
+                    </t>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click oe_semantic_html_override">
+                            <div class="oe_kanban_content"
+                                 tooltip="kanban-tooltip">
+                                <div>
+                                    <div class="row">
+                                        <div class="col-xs-6">
+                                            <strong>
+                                                <field name="name"/>
+                                            </strong>
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <span t-if="record.type.raw_value == 'entry'">
+                                                <i class="fa fa-arrow-left"/>
+                                            </span>
+                                            <span t-if="record.type.raw_value == 'exit'">
+                                                <i class="fa fa-arrow-right"/>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <span name="partner_id"
+                                          t-if="record.partner_id.raw_value">
+                                        <field name="partner_id"/>
+                                        <br/>
+                                    </span>
+                                    <ul>
+                                        <li>Date:
+                                            <field name="date"/>
+                                        </li>
+                                        <li>Comment:
+                                            <field name="notes"/>
+                                        </li>
+                                        <li>Shift:
+                                            <field name="shift_requested_string"/>
+                                        </li>
+                                        <li>
+                                            <field name="license_number"/>
+                                            <i class="fa fa-truck"/>
+                                        </li>
+                                        <li>Dock No.:
+                                            <field name="dock_id"/>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="csw_way_bill_action" model="ir.actions.act_window">
+        <field name="name">Way Bills</field>
+        <field name="res_model">csw.way.bill</field>
+        <field name="view_mode">kanban,tree,form,calendar</field>
+        <field name="view_id" ref="csw_way_bill_view_kanban"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to add a new Way Bill.
+            </p>
+        </field>
+    </record>
+
+    <!--Menu items-->
+    <menuitem id="menu_csw_driver"
+              name="Drivers"
+              parent="menu_csw_way_bill"
+              sequence="1" action="csw_driver_action"/>
+    <menuitem id="menu_csw_truck"
+              name="Trucks"
+              parent="menu_csw_way_bill"
+              sequence="2" action="csw_truck_action"/>
+    <menuitem id="menu_item_csw_way_bill"
+              name="Way Bills"
+              parent="menu_csw_way_bill"
+              sequence="3" action="csw_way_bill_action"/>
+</odoo>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_csw_bill_weight" model="ir.ui.view">
+        <field name="name">csw.bill.weight.form</field>
+        <field name="model">csw.bill.weight</field>
+        <field name="arch" type="xml">
+            <form string="Way Bill Register Weight">
+                <group>
+                    <field name="way_bill_id" invisible="1"/>
+                    <field name="action"/>
+                    <field name="license_number" required="1"/>
+                    <field name="weight_total" required="1"/>
+                </group>
+                <footer>
+                    <button string='Confirm' name="register_weight"
+                            type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

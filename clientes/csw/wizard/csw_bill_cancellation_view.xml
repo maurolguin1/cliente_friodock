@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_csw_bill_cancellation" model="ir.ui.view">
+        <field name="name">csw.bill.cancellation.form</field>
+        <field name="model">csw.bill.cancellation</field>
+        <field name="arch" type="xml">
+            <form string="Way Bill Cancellation">
+                <group>
+                    <field name="way_bill_id" invisible="1"/>
+                    <field name="date_cancel"/>
+                    <field name="cancellation_reason"/>
+                </group>
+                <footer>
+                    <button string='Confirm' name="cancel_way_bill"
+                            type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

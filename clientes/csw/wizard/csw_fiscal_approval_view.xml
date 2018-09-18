@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_csw_fiscal_approval" model="ir.ui.view">
+        <field name="name">csw.fiscal.approval.form</field>
+        <field name="model">csw.fiscal.approval</field>
+        <field name="arch" type="xml">
+            <form string="Fiscal Storage Approval">
+                <group>
+                    <field name="date_approval"/>
+                </group>
+                <footer>
+                    <button string='Confirm' name="set_approval_date"
+                            type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <act_window name="Fiscal Storage Approval"
+                multi="True"
+                res_model="csw.fiscal.approval"
+                src_model="stock.quant.package"
+                view_mode="form"
+                target="new"
+                key2="client_action_multi"
+                id="fiscal_approval_act_window"/>
+</odoo>

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="csw_product_reception_view_search" model="ir.ui.view">
+        <field name="name">csw.product.reception.search</field>
+        <field name="model">csw.product.reception</field>
+        <field name="arch" type="xml">
+            <search string="WH Product Reception Search">
+                <field name="partner_id"/>
+                <field name="truck_id"/>
+                <field name="driver_id"/>
+                <field name="storage_type_id"/>
+                <field name="dock_id"/>
+                <field name="user_id"/>
+                <field name="service_type_id"/>
+                <filter name="today" string="Today"
+                        domain="[('date','=',time.strftime('%%Y-%%m-%%d'))]"/>
+                <separator/>
+                <filter string="Draft" name="draft"
+                        domain="[('state','=','draft')]"/>
+                <filter string="Confirmed" name="confirm"
+                        domain="[('state','=','confirm')]"/>
+                <separator/>
+                <filter domain="[('user_id','=',uid)]"
+                        help="My Product Receptions"/>
+                <group expand="0" string="Group By">
+                    <filter name="partner_id" string="Customer"
+                            context="{'group_by':'partner_id'}"/>
+                    <filter name="truck" string="Truck"
+                            context="{'group_by':'truck_id'}"/>
+                    <filter name="status" string="Status"
+                            context="{'group_by':'state'}"/>
+                    <separator/>
+                    <filter name="service_type" string="Service Type"
+                            context="{'group_by':'service_type_id'}"/>
+                    <filter string="Date" context="{'group_by':'date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="csw_product_reception_view_form" model="ir.ui.view">
+        <field name="name">csw.product.reception.form</field>
+        <field name="model">csw.product.reception</field>
+        <field name="arch" type="xml">
+            <form string="WH Product Reception" create="false">
+                <header>
+                    <field name="start_time_is_set" invisible="1"/>
+                    <button name="set_start_time"
+                            string="Start time" type="object"
+                            attrs="{'invisible': ['|', ('start_time_is_set', '=', True), ('state', '=', 'confirm')]}"
+                            groups="base.group_user"/>
+                    <field name="end_time_is_set" invisible="1"/>
+                    <button name="set_end_time"
+                            string="End time" type="object"
+                            attrs="{'invisible': ['|', '|', ('start_time_is_set', '=', False), ('end_time_is_set', '=', True), ('state', '=', 'confirm')]}"
+                            groups="base.group_user"/>
+                    <button name="action_confirm" states="draft"
+                            string="Confirm" type="object"
+                            class="oe_highlight" groups="base.group_user"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button"
+                                name="open_way_bill" icon="fa-truck"
+                                type="object">
+                            <field name="way_bill_count" string="Way Bill"
+                                   widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button"
+                                name="open_stock_picking" icon="fa-truck"
+                                type="object">
+                            <field name="picking_count" string="Shipment"
+                                   widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only" string="Name"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="transport_type"/>
+                            <field name="truck_id"/>
+                            <field name="license_number"/>
+                            <field name="driver_id"/>
+                            <field name="trailer_number"/>
+                            <!--<field name="weight_entry"/>-->
+                            <!--<field name="weight_exit"/>-->
+                            <field name="dock_id" string="Dock No."/>
+                            <field name="location_dest_id"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                            <field name="start_time" widget="float_time"/>
+                            <field name="end_time" widget="float_time"/>
+                            <field name="delivery_number"
+                                   string="Customer Delivery No."/>
+                            <field name="inspection_number"/>
+                            <field name="seals_number"/>
+                            <field name="senasa_number"/>
+                            <field name="product_market"/>
+                            <field name="storage_type_id"/>
+                            <field name="available_package_ids"
+                                   invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Products">
+                            <field name="line_ids"
+                                   options="{'reload_on_button': True}"
+                                   context="{'default_product_reception_id': id}">
+                                <tree>
+                                    <field name="product_id"/>
+                                    <field name="description_sale"
+                                           string="Description"/>
+                                    <field name="package_id"/>
+                                    <field name="customer_pallet_no"/>
+                                    <field name="product_qty"/>
+                                    <field name="product_uom"
+                                           options="{'no_open': True, 'no_create': True}"
+                                           string="Unit of Measure"
+                                           groups="product.group_uom"/>
+                                    <field name="temperature"/>
+                                    <field name="avg_temperature"/>
+                                    <field name="lot_number"/>
+                                    <field name="create_date"/>
+                                    <field name="use_date"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="product_reception_id"
+                                               invisible="1"/>
+                                        <field name="product_id"
+                                               domain="[('store_ok', '=', True), ('owner_id', '=', parent.partner_id)]"/>
+                                        <field name="package_id"
+                                               domain="[('id', 'in', parent.available_package_ids and parent.available_package_ids[0] and parent.available_package_ids[0][2] or False)]"
+                                               options="{'no_create': True}"/>
+                                        <field name="customer_pallet_no"/>
+                                        <field name="pallet_type_id"/>
+                                        <label for="product_qty"/>
+                                        <div class="o_row">
+                                            <field name="product_qty"/>
+                                            <field name="product_uom"
+                                                   options="{'no_open': True, 'no_create': True}"
+                                                   groups="product.group_uom"/>
+                                        </div>
+                                        <field name="lot_number"/>
+                                        <field name="create_date"/>
+                                        <field name="use_date"/>
+                                        <field name="temperature"/>
+                                        <field name="avg_temperature"/>
+                                    </group>
+                                </form>
+                            </field>
+                            <group col="4">
+                                <field name="total_pallet_qty"/>
+                                <field name="service_type_id"/>
+                                <field name="total_product_qty"/>
+                                <field name="user_id"/>
+                            </group>
+                        </page>
+                        <page string="Observations">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="csw_product_reception_view_tree" model="ir.ui.view">
+        <field name="name">csw.product.reception.tree</field>
+        <field name="model">csw.product.reception</field>
+        <field name="arch" type="xml">
+            <tree string="WH Product Receptions" create="false">
+                <field name="name"/>
+                <field name="way_bill_id"/>
+                <field name="partner_id"/>
+                <field name="date"/>
+                <field name="license_number" string="Truck License"/>
+                <field name="start_time" widget="float_time"/>
+                <field name="end_time" widget="float_time"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="csw_product_reception_action" model="ir.actions.act_window">
+        <field name="name">WH Product Receptions</field>
+        <field name="res_model">csw.product.reception</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="csw_product_reception_view_tree"/>
+        <field name="help" type="html">
+            <p>
+                WH Product Receptions can be created only from Way Bill
+                records.
+            </p>
+        </field>
+    </record>
+
+    <!--Menu items-->
+    <menuitem id="menu_item_csw_product_reception"
+              name="Warehouse Product Receptions"
+              parent="menu_csw_management"
+              sequence="1" action="csw_product_reception_action"/>
+</odoo>

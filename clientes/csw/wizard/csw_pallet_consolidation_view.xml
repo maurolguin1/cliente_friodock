@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_csw_pallet_consolidation" model="ir.ui.view">
+        <field name="name">csw.pallet.consolidation.form</field>
+        <field name="model">csw.pallet.consolidation</field>
+        <field name="arch" type="xml">
+            <form string="Apply Consolidation">
+                <group>
+                    <field name="package_id" options="{'no_create': True}"/>
+                    <field name="consolidate_package_id"
+                           options="{'no_create': True}"/>
+                </group>
+                <footer>
+                    <button string='Confirm' name="apply_consolidation"
+                            type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <act_window name="Apply Consolidation"
+                multi="True"
+                res_model="csw.pallet.consolidation"
+                src_model="stock.quant.package"
+                view_mode="form"
+                target="new"
+                key2="client_action_multi"
+                id="pallet_consolidation_act_window"/>
+</odoo>

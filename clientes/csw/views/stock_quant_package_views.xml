@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_quant_package_search_inherited" model="ir.ui.view">
+        <field name="name">stock.quant.package.search.inherit</field>
+        <field name="model">stock.quant.package</field>
+        <field name="inherit_id" ref="stock.quant_package_search_view"/>
+        <field name="arch" type="xml">
+            <field name="packaging_id" position="after">
+                <field name="pallet_type_id"/>
+                <field name="storage_type_id"/>
+            </field>
+            <xpath expr="//group" position="inside">
+                <filter string='Customer' domain="[]" context="{'group_by' : 'partner_id'}"/>
+                <filter string='Pallet Expiry Date' domain="[]" context="{'group_by' : 'use_date'}"/>
+                <filter string='Reception No.' domain="[]" context="{'group_by' : 'product_reception_id'}"/>
+                <filter string='Pallet Lot No.' domain="[]" context="{'group_by' : 'lot_id'}"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_quant_package_form_inherited" model="ir.ui.view">
+        <field name="name">stock.quant.package.form.inherit</field>
+        <field name="model">stock.quant.package</field>
+        <field name="inherit_id" ref="stock.view_quant_package_form"/>
+        <field name="arch" type="xml">
+            <field name="owner_id" position="after">
+                <field name="partner_id"/>
+                <field name="pallet_type_id"/>
+                <field name="storage_type_id"/>
+                <field name="customer_pallet_no"/>
+                <field name="lot_id"/>
+                <field name="use_date"/>
+            </field>
+            <field name="parent_id" position="after">
+                <field name="product_market"/>
+                <field name="service_type_id"/>
+                <field name="current_location_id"/>
+                <field name="product_reception_id"
+                       string="WH Product Reception No."/>
+                <field name="product_delivery_id"
+                       string="WH Product Delivery No."/>
+            </field>
+            <notebook position="inside">
+                <page string="Details &amp; Controls">
+                    <group>
+                        <group>
+                            <field name="temp_reception" />
+                            <field name="avg_temp_reception" />
+                            <field name="senasa_control" />
+                            <field name="senasa_number" />
+                            <field name="fiscal_storage_type" />
+                            <field name="date_fiscal_approval" />
+                            <field name="fiscal_approval" />
+                            <field name="fiscal_approval_user_id" />
+                        </group>
+                        <group>
+                            <field name="temp_delivery" />
+                            <field name="avg_temp_delivery" />
+                            <field name="seals_number" />
+                            <field name="inspection_number" />
+                            <field name="date_consolidation" />
+                            <field name="date_de_consolidation" />
+                        </group>
+                    </group>
+                </page>
+                <page string="Invoicing">
+                    <group>
+                        <group>
+                            <field name="date_stock_in" />
+                            <field name="date_stock_out" />
+                            <field name="days_stock" />
+                        </group>
+                        <group>
+                            <field name="date_last_invoice" />
+                        </group>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+    <menuitem id="menu_package_csw" name="Pallets"
+              parent="csw.menu_csw_master_data"
+              action="stock.action_package_view"
+              groups="stock.group_tracking_lot"
+              sequence="2"/>
+</odoo>

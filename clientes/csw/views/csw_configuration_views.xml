@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--Cold Storage Type Views-->
+    <record id="csw_storage_type_view_search" model="ir.ui.view">
+        <field name="name">csw.storage.type.search</field>
+        <field name="model">csw.storage.type</field>
+        <field name="arch" type="xml">
+            <search string="Cold Storage Type Search">
+                <field name="code"/>
+                <field name="description"/>
+                <filter string="Archived" name="inactive"
+                        domain="[('active','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="service_type_id"
+                            string="Service Type for Storage"
+                            context="{'group_by':'service_type_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="csw_storage_type_view_form" model="ir.ui.view">
+        <field name="name">csw.storage.type.form</field>
+        <field name="model">csw.storage.type</field>
+        <field name="arch" type="xml">
+            <form string="Cold Storage Type">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-check">
+                            <field name="active" widget="boolean_button"
+                                   options='{"terminology": "active"}'/>
+                        </button>
+                    </div>
+                    <group>
+                        <field name="code"/>
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="csw_storage_type_view_tree" model="ir.ui.view">
+        <field name="name">csw.storage.type.tree</field>
+        <field name="model">csw.storage.type</field>
+        <field name="arch" type="xml">
+            <tree string="Cold Storage Types">
+                <field name="code"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="csw_storage_type_action" model="ir.actions.act_window">
+        <field name="name">Cold Storage Types</field>
+        <field name="res_model">csw.storage.type</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="csw_storage_type_view_tree"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to add a new Cold Storage Type.
+            </p>
+        </field>
+    </record>
+
+    <!--Service Type Views-->
+    <record id="csw_service_type_view_search" model="ir.ui.view">
+        <field name="name">csw.service.type.search</field>
+        <field name="model">csw.service.type</field>
+        <field name="arch" type="xml">
+            <search string="Service Type Search">
+                <field name="code"/>
+                <field name="service_task"/>
+                <filter string="Invoiceable Services" name="invoiceable"
+                        domain="[('invoicing_policy','=','invoiceable')]"/>
+                <filter string="Free Services" name="free"
+                        domain="[('invoicing_policy','=','free')]"/>
+                <separator/>
+                <filter string="Archived" name="inactive"
+                        domain="[('active','=',False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="csw_service_type_view_form" model="ir.ui.view">
+        <field name="name">csw.service.type.form</field>
+        <field name="model">csw.service.type</field>
+        <field name="arch" type="xml">
+            <form string="Service Type">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-check">
+                            <field name="active" widget="boolean_button"
+                                   options='{"terminology": "active"}'/>
+                        </button>
+                    </div>
+                    <group>
+                        <field name="code"/>
+                        <field name="service_task"/>
+                        <field name="invoicing_policy"/>
+                        <field name="invoice_product_id"
+                               attrs="{'required':[('invoicing_policy','=', 'invoiceable')]}"/>
+                        <!--<label string="Allowed for Register"/>-->
+                        <!--<div name="allowed_for_register" class="row">-->
+                            <!--<field name="way_bill" class="oe_inline"/>-->
+                            <!--<label for="way_bill"/>-->
+                            <!--<field name="movement_receipt"-->
+                                   <!--class="oe_inline"/>-->
+                            <!--<label for="movement_receipt"/>-->
+                            <!--<field name="movement_delivery"-->
+                                   <!--class="oe_inline"/>-->
+                            <!--<label for="movement_delivery"/>-->
+                            <!--<field name="internal_movement"-->
+                                   <!--class="oe_inline"/>-->
+                            <!--<label for="internal_movement"/>-->
+                            <!--<field name="pallet" class="oe_inline"/>-->
+                            <!--<label for="pallet"/>-->
+                        <!--</div>-->
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="csw_service_type_view_tree" model="ir.ui.view">
+        <field name="name">csw.service.type.tree</field>
+        <field name="model">csw.service.type</field>
+        <field name="arch" type="xml">
+            <tree string="Service Types">
+                <field name="code"/>
+                <field name="service_task"/>
+                <field name="invoicing_policy"/>
+                <field name="invoice_product_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="csw_service_type_action" model="ir.actions.act_window">
+        <field name="name">Service Types</field>
+        <field name="res_model">csw.service.type</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="csw_service_type_view_tree"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to add a new Service Type.
+            </p>
+        </field>
+    </record>
+
+    <!--Dock Views-->
+    <record id="csw_dock_view_search" model="ir.ui.view">
+        <field name="name">csw.dock.search</field>
+        <field name="model">csw.dock</field>
+        <field name="arch" type="xml">
+            <search string="Dock Search">
+                <field name="code"/>
+                <field name="description"/>
+                <filter string="Archived" name="inactive"
+                        domain="[('active','=',False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="csw_dock_view_form" model="ir.ui.view">
+        <field name="name">csw.dock.form</field>
+        <field name="model">csw.dock</field>
+        <field name="arch" type="xml">
+            <form string="Dock">
+                <sheet>
+                    <!--<div class="oe_button_box" name="button_box">-->
+                        <!--<button name="toggle_active" type="object"-->
+                                <!--class="oe_stat_button" icon="fa-check">-->
+                            <!--<field name="active" widget="boolean_button"-->
+                                   <!--options='{"terminology": "active"}'/>-->
+                        <!--</button>-->
+                    <!--</div>-->
+                    <group>
+                        <field name="code"/>
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="csw_dock_view_tree" model="ir.ui.view">
+        <field name="name">csw.dock.tree</field>
+        <field name="model">csw.dock</field>
+        <field name="arch" type="xml">
+            <tree string="Docks">
+                <field name="code"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="csw_dock_action" model="ir.actions.act_window">
+        <field name="name">Docks</field>
+        <field name="res_model">csw.dock</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="csw_dock_view_tree"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to add a new Dock.
+            </p>
+        </field>
+    </record>
+
+    <!--Pallet Type Views-->
+    <record id="csw_pallet_type_view_search" model="ir.ui.view">
+        <field name="name">csw.pallet.type.search</field>
+        <field name="model">csw.pallet.type</field>
+        <field name="arch" type="xml">
+            <search string="Pallet Type Search">
+                <field name="code"/>
+                <field name="service_type_id"/>
+                <filter string="Archived" name="inactive"
+                        domain="[('active','=',False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="csw_pallet_type_view_form" model="ir.ui.view">
+        <field name="name">csw.pallet.type.form</field>
+        <field name="model">csw.pallet.type</field>
+        <field name="arch" type="xml">
+            <form string="Pallet Type">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="service_type_id"/>
+                            <field name="move_in_service_type_id"/>
+                            <field name="move_out_service_type_id"/>
+                            <field name="senasa_control"/>
+                            <field name="fiscal_storage_type"/>
+                        </group>
+                        <group>
+                            <field name="product_qty"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="csw_pallet_type_view_tree" model="ir.ui.view">
+        <field name="name">csw.pallet.type.tree</field>
+        <field name="model">csw.pallet.type</field>
+        <field name="arch" type="xml">
+            <tree string="Pallet Types">
+                <field name="code"/>
+                <field name="service_type_id"/>
+                <field name="move_in_service_type_id"/>
+                <field name="move_out_service_type_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="csw_pallet_type_action" model="ir.actions.act_window">
+        <field name="name">Pallet Types</field>
+        <field name="res_model">csw.pallet.type</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="csw_pallet_type_view_tree"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to add a new Pallet Type.
+            </p>
+        </field>
+    </record>
+
+    <!--Menu items-->
+    <menuitem id="menu_csw_storage_type"
+              name="Cold Storage Types"
+              parent="menu_pallet_config"
+              sequence="1" action="csw_storage_type_action"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_csw_service_type"
+              name="Service Types"
+              parent="menu_pallet_config"
+              sequence="2" action="csw_service_type_action"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_csw_dock"
+              name="Docks"
+              parent="menu_pallet_config"
+              sequence="3" action="csw_dock_action"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_csw_pallet_type"
+              name="Pallet Types"
+              parent="menu_pallet_config"
+              sequence="4" action="csw_pallet_type_action"
+              groups="base.group_system"/>
+</odoo>

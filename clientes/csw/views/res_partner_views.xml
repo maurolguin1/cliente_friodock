@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="res_partner_view_inherited" model="ir.ui.view">
+        <field name="name">res.partner.view.inherited</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page/group/group/field[@name='supplier']"
+                   position="after">
+                <field name="transport"/>
+                <field name="insurance"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_res_partner_filter_csw" model="ir.ui.view">
+        <field name="name">res.partner.csw.inherit.search</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <filter name="supplier" position="after">
+                <filter string="Transport Companies" name="transport"
+                        domain="[('transport','=',1), ('parent_id', '=', False)]"/>
+                <filter string="Insurance Companies" name="insurance"
+                        domain="[('insurance','=',1), ('parent_id', '=', False)]"/>
+            </filter>
+        </field>
+    </record>
+    <menuitem id="menu_partner_form" parent="menu_csw_master_data"
+              action="base.action_partner_form" sequence="1"/>
+</odoo>

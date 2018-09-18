@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_template_search_view_csw" model="ir.ui.view">
+        <field name="name">product.template.search.csw</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='filter_to_purchase']"
+                   position="after">
+                <filter string="Can be Stored" name="filter_to_store"
+                        domain="[('store_ok', '=', 1)]"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="product_template_form_view_csw" model="ir.ui.view">
+        <field name="name">product.template.form.csw</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='options']/div[2]" position="after">
+                <div>
+                    <field name="store_ok"/>
+                    <label for="store_ok"/>
+                </div>
+            </xpath>
+            <field name="categ_id" position="after">
+                <field name="owner_id"/>
+                <field name="pallet_type_id"/>
+            </field>
+        </field>
+    </record>
+    <menuitem id="menu_product_variant_config_csw" name="Products"
+              action="stock.product_template_action_product"
+              parent="csw.menu_csw_master_data" sequence="3"/>
+</odoo>
